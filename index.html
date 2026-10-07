@@ -8,85 +8,220 @@
 <title>Bonjour Charlotte</title>
 </head>
 <body>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&family=Literata:ital,opsz,wght@0,7..72,400;1,7..72,400&display=swap">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&family=Literata:ital,opsz,wght@0,7..72,400;0,7..72,600;1,7..72,400&family=JetBrains+Mono:wght@500&display=swap">
 <style>
-/* Layout : une colonne de lecture, lecteur audio en tête, briefing en paragraphes dessous */
+/* Mise en page : une colonne de lecture, comme un journal de poche — marchés en tête, quatre blocs, citation en exergue, sources en pied de page */
 :root{
-  --bg:#F4F6F9; --surface:#FFFFFF; --fg:#16202B; --muted:#596677; --line:#D9E0E8; --dawn:#C76F1C; --dawn-soft:#F6E6D3; --on-dawn:#FFFFFF;
-  --display:"Bricolage Grotesque","Avenir Next",system-ui,sans-serif;
-  --body:"Literata",Georgia,"Times New Roman",serif;
+  --bg:#F4F6F9; --surface:#FFFFFF; --fg:#16202B; --muted:#596677; --line:#D9E0E8; --dawn:#C76F1C; --dawn-soft:#F6E6D3;
+  --up:#1E7A4E; --down:#B23A3A;
+  --display:"Bricolage Grotesque", "Avenir Next", system-ui, sans-serif;
+  --body:"Literata", Georgia, "Times New Roman", serif;
+  --mono:"JetBrains Mono", ui-monospace, Menlo, monospace;
 }
 @media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
-  --bg:#0F151C; --surface:#161E28; --fg:#E5EAF0; --muted:#97A3B2; --line:#26313E; --dawn:#F0A04B; --dawn-soft:#2B2116; --on-dawn:#1A1206; color-scheme:dark}}
+  --bg:#0F151C; --surface:#161E28; --fg:#E5EAF0; --muted:#97A3B2; --line:#26313E; --dawn:#F0A04B; --dawn-soft:#2B2116; --up:#5CC48F; --down:#F07B7B; color-scheme:dark}}
 :root[data-theme="dark"]{
-  --bg:#0F151C; --surface:#161E28; --fg:#E5EAF0; --muted:#97A3B2; --line:#26313E; --dawn:#F0A04B; --dawn-soft:#2B2116; --on-dawn:#1A1206; color-scheme:dark}
-body{background:var(--bg);color:var(--fg);font-family:var(--body);font-size:17px;line-height:1.65}
-.wrap{max-width:680px;margin:0 auto;padding-inline:20px;padding-block:28px 56px;display:flex;flex-direction:column;gap:28px}
+  --bg:#0F151C; --surface:#161E28; --fg:#E5EAF0; --muted:#97A3B2; --line:#26313E; --dawn:#F0A04B; --dawn-soft:#2B2116; --up:#5CC48F; --down:#F07B7B; color-scheme:dark}
+
+body{background:var(--bg);color:var(--fg);font-family:var(--body);font-size:17px;line-height:1.6}
+.wrap{max-width:720px;margin:0 auto;padding-inline:20px;padding-block:28px 56px;display:flex;flex-direction:column;gap:40px}
+
+header{display:flex;flex-direction:column;gap:6px}
+.horizon{width:100%;height:46px;display:block}
 .date{font-family:var(--display);font-size:13px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);font-weight:500}
-h1{font-family:var(--display);font-weight:700;font-size:clamp(34px,7vw,48px);line-height:1.05;margin:4px 0 0;letter-spacing:-.01em}
-.player{display:flex;flex-direction:column;gap:14px;padding:18px;border:1px solid var(--line);border-radius:6px;background:var(--surface)}
-.row{display:flex;align-items:center;gap:14px;min-width:0}
-#play{flex:none;width:56px;height:56px;border-radius:50%;border:0;background:var(--dawn);color:var(--on-dawn);font-size:22px;line-height:1;cursor:pointer;display:grid;place-items:center}
-#play:focus-visible,#seek:focus-visible{outline:2px solid var(--fg);outline-offset:3px}
-.track{display:flex;flex-direction:column;gap:6px;flex:1;min-width:0}
-.who{font-family:var(--display);font-size:15px;font-weight:700}
-#seek{width:100%;accent-color:var(--dawn);margin:0}
-.time{font-family:var(--display);font-size:12px;color:var(--muted);font-variant-numeric:tabular-nums;display:flex;justify-content:space-between}
-#status{font-size:14px;color:var(--muted);margin:0}
-article{display:flex;flex-direction:column;gap:16px}
-article h2{font-family:var(--display);font-size:13px;letter-spacing:.12em;text-transform:uppercase;color:var(--dawn);margin:8px 0 -8px}
-article p{margin:0;max-width:65ch}
-p.reading{background:var(--dawn-soft);border-radius:4px;box-shadow:0 0 0 6px var(--dawn-soft)}
-blockquote{margin:0;font-style:italic;font-size:21px;line-height:1.4}
-footer{font-size:13px;color:var(--muted);border-top:1px solid var(--line);padding-top:14px}
+h1{font-family:var(--display);font-weight:700;font-size:clamp(34px,7vw,48px);line-height:1.05;margin:0;text-wrap:balance;letter-spacing:-.01em}
+.lede{margin:6px 0 0;color:var(--muted);max-width:60ch}
+
+.ticker{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:1px;background:var(--line);border-block:1px solid var(--line)}
+.tick{padding:12px 10px;display:flex;flex-direction:column;gap:2px;min-width:0;background:var(--bg)}
+.tick .k{font-family:var(--display);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+.tick .v{font-family:var(--mono);font-size:17px;font-variant-numeric:tabular-nums;white-space:nowrap}
+.tick .d{font-family:var(--mono);font-size:12px;font-variant-numeric:tabular-nums}
+.d.up{color:var(--up)} .d.down{color:var(--down)} .d.flat{color:var(--muted)}
+.ticknote{font-size:13px;color:var(--muted);margin:8px 0 0}
+
+section{display:flex;flex-direction:column;gap:14px}
+.risk .sec-head .level{margin-left:auto;font-family:var(--display);font-size:12px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--dawn);border:1.5px solid var(--dawn);border-radius:3px;padding:2px 8px}
+.wx{flex-direction:row;align-items:center;gap:20px;padding:16px 18px;border:1px solid var(--line);border-radius:4px;background:var(--surface)}
+.wx-temp{font-family:var(--mono);font-size:30px;font-variant-numeric:tabular-nums;white-space:nowrap;color:var(--dawn)}
+.wx-temp .num{font-size:1em}
+.wx-temp .sep{color:var(--muted);margin:0 2px}
+.wx-text{display:flex;flex-direction:column;gap:2px;min-width:0}
+.wx-text .k{font-family:var(--display);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+.wx-text p{margin:0;font-size:16px}
+@media (max-width:480px){.wx{flex-direction:column;align-items:flex-start;gap:8px}}
+.sec-head{display:flex;align-items:baseline;gap:12px;border-bottom:2px solid var(--fg);padding-bottom:6px}
+.sec-head .n{font-family:var(--mono);font-size:13px;color:var(--dawn)}
+h2{font-family:var(--display);font-weight:700;font-size:22px;margin:0;letter-spacing:-.005em}
+.items{display:flex;flex-direction:column;gap:16px}
+.item h3{font-family:var(--display);font-weight:500;font-size:18px;line-height:1.3;margin:0 0 4px;text-wrap:balance}
+.item p{margin:0;max-width:65ch}
+.num{font-family:var(--mono);font-size:.92em;font-variant-numeric:tabular-nums}
+
+.quote{background:var(--dawn-soft);border-radius:4px;padding:28px 24px;display:flex;flex-direction:column;gap:14px}
+.quote .label{font-family:var(--display);font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--dawn);font-weight:700}
+blockquote{margin:0;font-style:italic;font-size:clamp(21px,4vw,26px);line-height:1.35;text-wrap:balance}
+.who{font-family:var(--display);font-size:14px;color:var(--muted)}
+.quote p{margin:0;max-width:62ch}
+
+footer{display:flex;flex-direction:column;gap:10px;font-size:13px;color:var(--muted);border-top:1px solid var(--line);padding-top:16px}
+footer ul{margin:0;padding-left:18px;display:flex;flex-direction:column;gap:4px}
 footer a{color:var(--muted)}
+a:focus-visible{outline:2px solid var(--dawn);outline-offset:2px}
+.next{font-family:var(--display);color:var(--fg)}
+.player{display:flex;align-items:center;gap:14px;padding:14px 16px;border:1px solid var(--line);border-radius:6px;background:var(--surface);margin-top:14px}
+#play{flex:none;width:52px;height:52px;border-radius:50%;border:0;background:var(--dawn);color:var(--surface);font-size:20px;line-height:1;cursor:pointer;display:grid;place-items:center}
+#play:focus-visible,#seek:focus-visible{outline:2px solid var(--fg);outline-offset:3px}
+.track{display:flex;flex-direction:column;gap:5px;flex:1;min-width:0}
+.track .who2{font-family:var(--display);font-size:14px;font-weight:700}
+#seek{width:100%;accent-color:var(--dawn);margin:0}
+.time{font-family:var(--display);font-size:12px;color:var(--muted);font-variant-numeric:tabular-nums;display:flex;justify-content:space-between;gap:8px}
+#status{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.reading{background:var(--dawn-soft);box-shadow:0 0 0 8px var(--dawn-soft);border-radius:2px}
+
+@media (max-width:560px){
+  .ticker{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .tick:first-child{grid-column:1 / -1}
+}
 </style>
 
 <div class="wrap">
   <header>
+    <svg class="horizon" viewBox="0 0 720 46" preserveAspectRatio="none" aria-hidden="true">
+      <path d="M0 40 H720" stroke="var(--line)" stroke-width="1.5" fill="none"/>
+      <path d="M330 40 A30 30 0 0 1 390 40 Z" fill="var(--dawn)"/>
+      <g stroke="var(--dawn)" stroke-width="2" stroke-linecap="round" fill="none">
+        <path d="M360 4 V0"/><path d="M318 16 L313 12"/><path d="M402 16 L407 12"/><path d="M300 32 L294 31"/><path d="M420 32 L426 31"/>
+      </g>
+    </svg>
     <div class="date">Mercredi · 7 octobre 2026</div>
-    <h1>Bonjour Charlotte !</h1>
-  </header>
-
-  <section class="player" aria-label="Écouter le briefing">
-    <div class="row">
+    <h1>Bonjour Charlotte.</h1>
+    <p class="lede" data-say="Bonjour Charlotte ! Nous sommes mercredi 7 octobre 2026. La France est dans la rue, le Brésil prépare son second tour et le réal reste fort. Voici l’essentiel.">La France est dans la rue, le Brésil prépare son second tour et le réal reste fort. Voici l’essentiel.</p>
+    <div class="player" aria-label="Écouter le briefing">
       <button id="play" type="button" aria-label="Écouter">▶</button>
       <div class="track">
-        <span class="who">Ton briefing, lu par une voix française</span>
-        <input id="seek" type="range" min="0" max="100" step="0.1" value="0" aria-label="Position dans l'enregistrement">
-        <div class="time"><span id="cur">0:00</span><span id="dur">–:––</span></div>
+        <span class="who2">Écoute ton briefing</span>
+        <input id="seek" type="range" min="0" max="100" step="0.1" value="0" aria-label="Position dans l’enregistrement">
+        <div class="time"><span id="cur">0:00</span><span id="status">Le passage lu s’éclaire.</span><span id="dur">–:––</span></div>
       </div>
+      <audio id="narration" preload="metadata" src="audio/briefing-2026-10-07.mp3"></audio>
     </div>
-    <p id="status">Appuie sur lecture. Le paragraphe en cours s'éclaire pendant l'écoute.</p>
-    <audio id="narration" preload="metadata" src="audio/briefing-2026-10-07.mp3"></audio>
+  </header>
+
+  <div>
+    <div class="ticker" role="list" data-say="Sur les marchés : le CAC 40 a clôturé mardi à 7 798 points, en baisse de 0,85 pour cent. À São Paulo, l’Ibovespa a fini à 205 835 points, moins 0,5 pour cent. L’euro vaut 5 réais 61 et le dollar 4 réais 98. Le pétrole Brent est à 100 dollars le baril.">
+      <div class="tick" role="listitem"><span class="k">CAC 40</span><span class="v">7 798</span><span class="d down">−0,85 %</span></div>
+      <div class="tick" role="listitem"><span class="k">Ibovespa</span><span class="v">205 835</span><span class="d down">−0,5 %</span></div>
+      <div class="tick" role="listitem"><span class="k">Euro</span><span class="v">5,61 R$</span><span class="d up">+0,1 %</span></div>
+      <div class="tick" role="listitem"><span class="k">Dollar</span><span class="v">4,98 R$</span><span class="d flat">stable</span></div>
+      <div class="tick" role="listitem"><span class="k">Brent</span><span class="v">100,74 $</span><span class="d up">+0,4 %</span></div>
+    </div>
+    <p class="ticknote">CAC 40, Ibovespa et Brent : clôture de mardi (6 oct.). Euro et dollar en reais : cours de ce mercredi matin. Variation sur la clôture précédente.</p>
+  </div>
+
+  <section class="wx" aria-label="Météo à São Paulo" data-say="La météo à São Paulo aujourd’hui : de 18 à 27 degrés. Soleil et nuages, avec 88 pour cent de risque d’averses dans la journée et le soir. Tenue légère, mais un petit parapluie dans le sac. Demain, plus chaud : 29 degrés, avec des orages l’après-midi.">
+    <div class="wx-temp"><span class="num">18°</span><span class="sep">/</span><span class="num">27°</span></div>
+    <div class="wx-text">
+      <span class="k">Météo à São Paulo aujourd’hui</span>
+      <p>Soleil et nuages, <strong>88 % de risque d’averses</strong> dans la journée et le soir. Tenue légère, mais un petit parapluie dans le sac. Demain : 29 °C, orages l’après-midi.</p>
+    </div>
   </section>
 
-  <article id="texte">
-    <p>Bonjour Charlotte ! Nous sommes mercredi 7 octobre 2026. Voici ton briefing du matin.</p>
-    <h2>Météo à São Paulo</h2>
-    <p>Fini le ciel tout gris d'hier. Aujourd'hui, du soleil avec quelques nuages, entre 18 et 27 degrés. Mais attention : des averses rapides sont prévues dans la journée et le soir, avec 88 pour cent de risque de pluie. Mets un petit parapluie dans ton sac, et une tenue légère. La chaleur monte ensuite : 29 degrés jeudi avec des orages l'après-midi, 31 vendredi, puis 33 degrés samedi, au sec. Dimanche, en revanche, de fortes pluies sont attendues. Si tu prévois une sortie, garde-la plutôt pour samedi.</p>
-    <h2>France</h2>
-    <p>La colère des lycéens ne faiblit pas. Mardi, pour la troisième grande journée de mobilisation, ils étaient 450 000 dans les rues selon les organisateurs, et un peu plus de 250 000 selon le ministère de l'Intérieur. Plus de 200 élèves ont été blessés depuis le début du mouvement, mi-septembre. Le ministre de l'Intérieur, Laurent Nuñez, a annoncé la suspension des grenades assourdissantes pour les forces de l'ordre.</p>
-    <p>Pour apaiser les tensions, le ministre de l'Éducation prévoit une demi-journée sans cours dans tous les établissements, pour laisser place au dialogue. Et ce soir, le Premier ministre Sébastien Lecornu s'adresse aux Français depuis Matignon : lycées, prix des carburants, crise agricole et finances publiques seront au menu.</p>
-    <p>Côté économie, deux signaux contraires. Le déficit de l'État atteint près de 160 milliards d'euros à la fin août, un peu plus qu'il y a un an. Mais l'activité dans les services repart : l'indicateur de confiance des directeurs d'achat passe de 48 à 51 points en septembre, au-dessus du seuil de croissance.</p>
-    <h2>Brésil</h2>
-    <p>Après l'euphorie de lundi, la Bourse de São Paulo a soufflé mardi. L'indice a cédé un demi pour cent, à un peu moins de 206 000 points, les investisseurs empochant leurs gains après une hausse record. Certains analystes visent tout de même 220 000 points à court terme.</p>
-    <p>Le réal, lui, continue de se renforcer. Le dollar est passé sous la barre des 5 reais, à 4 reais et 97 centimes, son niveau le plus bas depuis près de cinq mois. Pour toi, concrètement : quand tu changes tes euros, tu obtiens moins de reais qu'il y a quelques semaines. Si tu dois envoyer de l'argent depuis la France, ce n'est pas le moment le plus avantageux.</p>
-    <p>Pourquoi cet enthousiasme ? Les marchés voient dans le sénateur Flávio Bolsonaro, arrivé en tête dimanche avec 47 pour cent des voix contre 45 pour Lula, un candidat plus strict sur les dépenses publiques. Son parti devient aussi la première force du Congrès, avec 28 sénateurs sur 81 et environ 121 députés. Le second tour aura lieu le 25 octobre, et beaucoup d'analystes donnent le sénateur favori.</p>
-    <h2>Monde</h2>
-    <p>Au Moyen-Orient, la Turquie, l'Arabie saoudite et le Pakistan ont décidé d'activer immédiatement leurs engagements de défense mutuelle, avec la possibilité de déployer rapidement des troupes en Arabie saoudite. Un signe de plus des fortes tensions dans la région.</p>
-    <p>En Ukraine, le chancelier allemand Friedrich Merz s'est rendu à Kiev et a promis 1,3 milliard d'euros d'aide : environ 1 milliard pour l'armée et 350 millions pour réparer le réseau électrique avant l'hiver. Toujours en Allemagne, l'extrême droite a obtenu près de 44 pour cent des voix aux élections régionales en Saxe-Anhalt, un score inédit.</p>
-    <h2>Tech et innovation</h2>
-    <p>OpenAI annonce que l'un de ses modèles, pas encore public, a produit 372 nouveaux résultats en mathématiques, presque tous à partir d'une seule consigne donnée à un agent. Une étape de plus vers une intelligence artificielle qui aide vraiment la recherche.</p>
-    <p>Google a signé un contrat d'électricité géant avec le producteur américain Constellation : près de 3 600 mégawatts sur vingt ans, dont un quart issu de nouvelles capacités nucléaires. Les centres de données de l'intelligence artificielle ont un appétit d'énergie énorme, et le nucléaire revient en force pour les nourrir.</p>
-    <p>En Europe, le géant allemand du logiciel SAP rachète la jeune pousse belge TechWolf, la plus belle vente de l'histoire pour une jeune pousse belge soutenue par des investisseurs. Et en France, la jeune entreprise Cleavr lève 8 millions d'euros pour automatiser, grâce à l'intelligence artificielle, le recouvrement des factures.</p>
-    <h2>Citation du jour</h2>
-    <blockquote><p>« Ce qui trouble les hommes, ce ne sont pas les choses, mais les jugements qu'ils portent sur les choses. » Épictète, Manuel.</p></blockquote>
-    <p>Une averse imprévue, un taux de change qui bouge, une actualité agitée : on ne contrôle pas grand-chose de tout ça. Ce qui dépend de toi, c'est la manière dont tu le regardes. Aujourd'hui, quand quelque chose t'agace, demande-toi simplement : est-ce la chose elle-même, ou l'idée que je m'en fais ?</p>
-    <p>Belle journée, Charlotte !</p>
-  </article>
+  <section>
+    <div class="sec-head"><span class="n">1</span><h2 data-say="">France</h2></div>
+    <div class="items">
+      <article class="item" data-say="">
+        <h3>Les lycéens toujours dans la rue</h3>
+        <p>Troisième grande journée mardi : <span class="num">450 000</span> manifestants selon les organisateurs, un peu plus de 250 000 selon l’Intérieur. Plus de 200 élèves blessés depuis mi-septembre ; Laurent Nuñez suspend les grenades assourdissantes.</p>
+      </article>
+      <article class="item" data-say="">
+        <h3>Lecornu parle aux Français ce soir</h3>
+        <p>Le Premier ministre s’exprime depuis Matignon : lycées, carburants, crise agricole et finances publiques. L’Éducation prévoit une demi-journée sans cours, consacrée au dialogue.</p>
+      </article>
+      <article class="item" data-say="">
+        <h3>Déficit en hausse, services en reprise</h3>
+        <p>Le déficit de l’État atteint près de <span class="num">160 milliards d’euros</span> fin août. Mais l’indice des directeurs d’achat des services passe de 48 à 51 points, au-dessus du seuil de croissance.</p>
+      </article>
+    </div>
+  </section>
 
-  <footer>Sources : Climatempo, CNN Brasil, Agência Brasil, Americas Quarterly, Public Sénat, France 24, Trading Economics, The Rio Times, Anadolu, AI Weekly, Tech.eu.</footer>
+  <section>
+    <div class="sec-head"><span class="n">2</span><h2 data-say="">Brésil</h2></div>
+    <div class="items">
+      <article class="item" data-say="">
+        <h3>La Bourse souffle après le record</h3>
+        <p>L’Ibovespa a cédé <span class="num">0,5 %</span> mardi, à 205 835 points, après la hausse historique de lundi. Certains analystes visent encore 220 000 points.</p>
+      </article>
+      <article class="item" data-say="">
+        <h3>Le réal reste fort : moins de reais pour tes euros</h3>
+        <p>Le dollar est sous les <span class="num">5 reais</span>, au plus bas depuis près de cinq mois, et l’euro vaut 5,61 reais. Concrètement : changer des euros ou envoyer de l’argent depuis la France rapporte moins qu’il y a quelques semaines.</p>
+      </article>
+      <article class="item" data-say="">
+        <h3>Second tour le 25 octobre</h3>
+        <p>Flávio Bolsonaro est arrivé en tête dimanche avec <span class="num">47 %</span>, contre 45 % pour Lula. Son parti devient la première force du Congrès, et le centre droit vient de se rallier à lui.</p>
+      </article>
+    </div>
+  </section>
+
+  <section>
+    <div class="sec-head"><span class="n">3</span><h2 data-say="">Monde</h2></div>
+    <div class="items">
+      <article class="item" data-say="">
+        <h3>Pacte de défense activé au Moyen-Orient</h3>
+        <p>La Turquie, l’Arabie saoudite et le Pakistan activent leur défense mutuelle, avec possible envoi rapide de troupes en Arabie saoudite. Le Brent reste autour de 100 dollars.</p>
+      </article>
+      <article class="item" data-say="">
+        <h3>Merz à Kiev avec 1,3 milliard d’euros</h3>
+        <p>Environ 1 milliard pour l’armée ukrainienne et 350 millions pour le réseau électrique avant l’hiver.</p>
+      </article>
+      <article class="item" data-say="">
+        <h3>Score inédit de l’extrême droite en Saxe-Anhalt</h3>
+        <p>Près de <span class="num">44 %</span> des voix aux élections régionales allemandes, du jamais-vu.</p>
+      </article>
+    </div>
+  </section>
+
+  <section>
+    <div class="sec-head"><span class="n">4</span><h2 data-say="">Tech et innovation</h2></div>
+    <div class="items">
+      <article class="item" data-say="">
+        <h3>OpenAI : 372 résultats mathématiques inédits</h3>
+        <p>Un modèle encore non public les a produits presque tous à partir d’une seule consigne donnée à un agent.</p>
+      </article>
+      <article class="item" data-say="">
+        <h3>Google mise sur le nucléaire</h3>
+        <p>Contrat de <span class="num">3 600 mégawatts</span> sur vingt ans avec Constellation, dont un quart de nouvelles capacités nucléaires, pour alimenter ses centres de données.</p>
+      </article>
+      <article class="item" data-say="">
+        <h3>En Europe : SAP rachète TechWolf, Cleavr lève 8 millions</h3>
+        <p>La plus belle vente d’une jeune pousse belge ; en France, Cleavr automatise le recouvrement des factures grâce à l’IA.</p>
+      </article>
+    </div>
+  </section>
+
+  <section class="quote" aria-label="Citation du jour">
+    <span class="label">5 · Citation du jour</span>
+    <blockquote data-say="La citation du jour est d’Épictète, dans le Manuel : Ce qui trouble les hommes, ce ne sont pas les choses, mais les jugements qu’ils portent sur les choses.">« Ce qui trouble les hommes, ce ne sont pas les choses, mais les jugements qu’ils portent sur les choses. »</blockquote>
+    <span class="who">Épictète, <em>Manuel</em>, V · IIe siècle</span>
+    <p data-say="">Une averse, un taux de change qui bouge, une actualité agitée : on n’en contrôle pas grand-chose. Aujourd’hui, quand quelque chose t’agace, demande-toi : est-ce la chose elle-même, ou l’idée que je m’en fais ?</p>
+  </section>
+
+  <footer>
+    <span class="next" data-say="Belle journée, Charlotte !">Prochaine édition : demain, à 6 h 45.</span>
+    <span>Sources</span>
+    <ul>
+      <li><a href="https://www.climatempo.com.br/previsao-do-tempo/15-dias/cidade/558/saopaulo-sp">Climatempo · prévisions pour São Paulo</a></li>
+      <li><a href="https://tradingeconomics.com/france/stock-market">Trading Economics · CAC 40</a></li>
+      <li><a href="https://tradingeconomics.com/brazil/stock-market">Trading Economics · Ibovespa et réal</a></li>
+      <li><a href="https://www.publicsenat.fr/">Public Sénat · mobilisation des lycéens</a></li>
+      <li><a href="https://www.france24.com/fr/">France 24 · France et monde</a></li>
+      <li><a href="https://agenciabrasil.ebc.com.br/">Agência Brasil · élection et économie</a></li>
+      <li><a href="https://www.aa.com.tr/fr">Anadolu · défense au Moyen-Orient</a></li>
+      <li><a href="https://aiweekly.co/">AI Weekly · OpenAI, Google</a></li>
+      <li><a href="https://tech.eu/">Tech.eu · SAP, TechWolf, Cleavr</a></li>
+    </ul>
+  </footer>
 </div>
 
 <script>
@@ -96,16 +231,20 @@ footer a{color:var(--muted)}
   var seek = document.getElementById('seek');
   var cur = document.getElementById('cur'), dur = document.getElementById('dur');
   var status = document.getElementById('status');
-  var paras = Array.prototype.slice.call(document.querySelectorAll('#texte p'));
-  var starts = [0.0, 6.3, 36.91, 57.99, 75.55, 93.58, 109.3, 128.8, 150.44, 165.91, 185.04, 200.79, 219.25, 237.23, 244.02, 259.75];
-  var dragging = false, last = -1;
+  var segs = Array.prototype.slice.call(document.querySelectorAll('[data-say]'));
+  var starts = [0.0, 10.75, 30.79, 46.69, 48.03, 64.33, 77.11, 91.03, 92.48, 105.84, 121.67, 135.79, 137.03, 149.9, 159.87, 168.3, 170.05, 180.44, 191.58, 202.14, 210.81, 222.58];
+  var dragging = false, last = -1, retried = false;
   function fmt(t){ t = Math.max(0, Math.floor(t||0)); return Math.floor(t/60) + ':' + ('0' + (t%60)).slice(-2); }
   function mark(t){
     var i = -1;
     for (var j = 0; j < starts.length; j++) { if (t >= starts[j]) i = j; }
     if (a.paused && t === 0) i = -1;
     if (i === last) return; last = i;
-    paras.forEach(function(p, k){ p.classList.toggle('reading', k === i); });
+    segs.forEach(function(el, k){ el.classList.toggle('reading', k === i); });
+    if (i >= 0 && !a.paused) {
+      var r = segs[i].getBoundingClientRect();
+      if (r.top < 0 || r.bottom > window.innerHeight) segs[i].scrollIntoView({behavior: 'smooth', block: 'center'});
+    }
   }
   a.addEventListener('loadedmetadata', function(){ dur.textContent = fmt(a.duration); });
   a.addEventListener('timeupdate', function(){
@@ -113,25 +252,21 @@ footer a{color:var(--muted)}
     cur.textContent = fmt(a.currentTime); mark(a.currentTime);
   });
   a.addEventListener('play', function(){ btn.textContent = '❚❚'; btn.setAttribute('aria-label','Pause'); status.textContent = 'Lecture en cours…'; });
-  a.addEventListener('pause', function(){ btn.textContent = '▶'; btn.setAttribute('aria-label','Écouter'); if (!a.ended) status.textContent = 'En pause.'; });
-  a.addEventListener('ended', function(){ status.textContent = 'Fin du briefing. Belle journée !'; last = -2; paras.forEach(function(p){ p.classList.remove('reading'); }); });
-  var retried = false;
+  a.addEventListener('pause', function(){ btn.textContent = '▶'; btn.setAttribute('aria-label','Écouter'); if (!a.ended) status.textContent = 'En pause'; });
+  a.addEventListener('ended', function(){ status.textContent = 'Fin du briefing'; last = -2; segs.forEach(function(el){ el.classList.remove('reading'); }); });
   a.addEventListener('error', function(){
-    if (retried) { status.textContent = "L'enregistrement n'a pas pu être chargé. Recharge la page."; return; }
+    if (retried) { status.textContent = 'Audio indisponible. Recharge la page.'; return; }
     retried = true;
     fetch(a.getAttribute('src')).then(function(r){ if (!r.ok) throw 0; return r.blob(); })
       .then(function(b){ a.src = URL.createObjectURL(b); })
-      .catch(function(){ status.textContent = "L'enregistrement n'a pas pu être chargé. Recharge la page."; });
+      .catch(function(){ status.textContent = 'Audio indisponible. Recharge la page.'; });
   });
   btn.addEventListener('click', function(){
-    if (a.paused) { var p = a.play(); if (p && p.catch) p.catch(function(){ status.textContent = 'Appuie encore une fois sur lecture.'; }); }
+    if (a.paused) { var p = a.play(); if (p && p.catch) p.catch(function(){ status.textContent = 'Appuie encore pour écouter'; }); }
     else a.pause();
   });
   seek.addEventListener('input', function(){ dragging = true; if (a.duration) cur.textContent = fmt(seek.value / 100 * a.duration); });
   seek.addEventListener('change', function(){ if (a.duration) a.currentTime = seek.value / 100 * a.duration; dragging = false; });
-  paras.forEach(function(p, k){
-    p.addEventListener('dblclick', function(){ if (starts[k] != null) { a.currentTime = starts[k]; a.play(); } });
-  });
 })();
 </script>
 </body>
